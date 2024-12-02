@@ -1,0 +1,12 @@
+{
+	"type": "record",
+	"name": "tab1",
+	"fields": [
+		{"name":"id", "type": "string"},
+		{"name":"msg", "type": ["null", "string"], "default": null},
+		{"name":"flag", "type": ["null", "long"], "default": null},
+		{"name":"amount", "type": ["null", "long"], "default": null},
+		{"name":"temp", "type": ["null", "long"], "default": null},
+		{"name":"price", "type": ["null", "double"], "default": null}
+	]
+}
