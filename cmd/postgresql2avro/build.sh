@@ -3,5 +3,5 @@
 go \
 	build \
 	-v \
-	-tags pgx \
-	./...
+	--tags pgx \
+	.
