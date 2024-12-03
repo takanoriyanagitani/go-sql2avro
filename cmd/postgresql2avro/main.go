@@ -12,8 +12,8 @@ import (
 
 	util "github.com/takanoriyanagitani/go-sql2avro/util"
 
-	sq "github.com/takanoriyanagitani/go-sql2avro/common/sql/query"
 	sf "github.com/takanoriyanagitani/go-sql2avro/avro/schema/fs"
+	sq "github.com/takanoriyanagitani/go-sql2avro/common/sql/query"
 
 	sg "github.com/takanoriyanagitani/go-sql2avro/rdb/postgresql/pgx"
 
