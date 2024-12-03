@@ -1,0 +1,16 @@
+{
+	"type": "record",
+	"name": "tab2",
+	"fields": [
+		{"name":"id", "type": "string"},
+		{"name":"msg", "type": ["null", "string"], "default": null},
+		{"name":"flag", "type": ["null", "long"], "default": null},
+		{"name":"amount", "type": ["null", "long"], "default": null},
+		{"name":"temp", "type": ["null", "long"], "default": null},
+		{"name":"price", "type": ["null", "double"], "default": null},
+		{"name":"created", "type": {
+			"type": "long",
+			"logicalType": "timestamp-micros"
+		}}
+	]
+}
