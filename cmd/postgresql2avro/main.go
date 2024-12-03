@@ -1,3 +1,6 @@
+//go:build pgx
+// +build pgx
+
 package main
 
 import (
@@ -12,7 +15,7 @@ import (
 	sq "github.com/takanoriyanagitani/go-sql2avro/common/sql/query"
 	sf "github.com/takanoriyanagitani/go-sql2avro/avro/schema/fs"
 
-	sg "github.com/takanoriyanagitani/go-sql2avro/rdb/sqlite/glebarez"
+	sg "github.com/takanoriyanagitani/go-sql2avro/rdb/postgresql/pgx"
 
 	ah "github.com/takanoriyanagitani/go-sql2avro/avro/hamba"
 )
@@ -29,19 +32,19 @@ func GetEnvByKey(key string) util.IO[string] {
 	}
 }
 
-var sqlite2maps func(
+var postgresql2maps func(
 	ctx context.Context,
-	filename string,
+	connectionString string,
 	trustedQuery string,
-) iter.Seq2[map[string]any, error] = sg.Filename2Maps
+) iter.Seq2[map[string]any, error] = sg.ConnString2Maps
 
-var sqliteFilename util.IO[string] = GetEnvByKey("ENV_SQLITE_DB_FILENAME")
+var pgConnString util.IO[string] = GetEnvByKey("ENV_POSTGRESQL_CONN_STR")
 
 var stdinToSql util.IO[string] = sq.Reader2sqlDefault(os.Stdin)
 
 var anyMaps util.IO[iter.Seq2[map[string]any, error]] = util.Bind(
-	sqliteFilename,
-	func(filename string) util.IO[iter.Seq2[map[string]any, error]] {
+	pgConnString,
+	func(connectionString string) util.IO[iter.Seq2[map[string]any, error]] {
 		return func(
 			ctx context.Context,
 		) (iter.Seq2[map[string]any, error], error) {
@@ -49,7 +52,7 @@ var anyMaps util.IO[iter.Seq2[map[string]any, error]] = util.Bind(
 			if nil != e {
 				return nil, e
 			}
-			return sqlite2maps(ctx, filename, trustedQuery), nil
+			return postgresql2maps(ctx, connectionString, trustedQuery), nil
 		}
 	},
 )
@@ -65,7 +68,7 @@ var schemaContent util.IO[string] = util.Bind(
 	schemaFilenameToStringLimitedDefault,
 )
 
-var sqlite2maps2avro util.IO[util.Void] = util.Bind(
+var postgresql2maps2avro util.IO[util.Void] = util.Bind(
 	anyMaps,
 	func(m iter.Seq2[map[string]any, error]) util.IO[util.Void] {
 		return func(ctx context.Context) (util.Void, error) {
@@ -87,7 +90,7 @@ func sub(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	_, e := sqlite2maps2avro(ctx)
+	_, e := postgresql2maps2avro(ctx)
 	return e
 }
 
